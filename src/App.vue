@@ -32,6 +32,7 @@ body, html
     display: flex
     flex-direction: column
     justify-content: center
+    align-items: center
     background-color: $black
     color: white
 .topbar
@@ -41,7 +42,9 @@ body, html
     background-color: $dark_black
     letter-spacing: 2px
 #app
+    width: calc(100% - 20px)
     padding: 20px 10px
+    max-width: 600px
     .app_wraper
         padding: 0px 0px 15px 0px
         box-shadow: $shadow

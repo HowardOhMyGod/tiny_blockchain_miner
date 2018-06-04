@@ -10,20 +10,79 @@
             .body
                 .hash_total
                     .title Mining Hashes
-                    .amout {{hashes}}
+                    .amount {{hashes}}
+                .hash_total.time
+                    .title Time
+                    .amount {{mineSeconds}}/s
+                transition(name="find")
+                    .hash_total.hash(v-if="findHash && findObj")
+                        .title Mined Hash
+                        .amount {{findObj.hash}}
             .down
-                .start Start
+                #start_btn.start(@click="mine", :class="{stop: isMine}") {{start_btn}}
 
 </template>
 
 <script>
+import * as crypto from "crypto"
+
+let timeCount;
+
+function is_proof(hashStr){
+    return hashStr.slice(0, 4) == "0000"
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+function start(vue){
+    let thisVue = vue
+
+    timeCount = setInterval(() => thisVue.mineSeconds++, 1000)
+
+    thisVue.pressStop = false
+    thisVue.isMine = true
+    thisVue.start_btn = "Stop"
+}
+
+function stop(vue) {
+    let thisVue = vue
+
+    clearInterval(timeCount)
+
+    thisVue.pressStop = true
+    thisVue.start_btn = "Start"
+    thisVue.isMine = false
+}
+
+function mine(proof, last_proof, last_hash) {
+    let hashStr = ''
+    let hash = crypto.createHash('sha256');
+
+    hash.update(`${last_proof}${proof}${last_hash}`)
+    hashStr = hash.digest('hex')
+
+    if(is_proof(hashStr)) {
+        return {
+            "hash": hashStr,
+            "proof": proof
+        }
+    } else {
+        return null
+    }
+}
+
 export default {
     sockets: {
         connect: function(){
-            this.connect = "Connect!"
+            console.log('Connect Server!')
         },
-        server_res: function(res){
-            this.res = res
+        lose_mine: function(res){
+            if (res.lose) {
+                stop(this)
+                alert("You're too slow!")
+            }
         }
 
     },
@@ -33,12 +92,46 @@ export default {
             res: '',
             hasLogin: false,
             walletAddr: "",
-            hashes: 0
+            hashes: 0,
+            last_hash: 'fifwjiofheiwofn',
+            last_proof: 100,
+            start_btn: "Start",
+            isMine: false,
+            pressStop: false,
+            findHash: false,
+            mineSeconds: 0,
+            findObj: null
         }
     },
     methods: {
         clickBtn: function(){
             this.$socket.emit('message', "Hello Server!")
+        },
+        mine: async function(){
+            let proof = 0
+
+            if (!this.isMine) {
+                start(this)
+
+                while(!this.pressStop){
+                    this.findObj = mine(proof, this.last_proof, this.last_hash)
+
+                    if (this.findObj) {
+                        break
+                    }
+
+                    proof++
+                    this.hashes++
+                    // await sleep(0.00000000000001)
+                }
+
+                stop(this)
+                this.findHash = true
+
+            } else {
+                stop(this)
+            }
+
         }
     },
     mounted(){
@@ -47,6 +140,12 @@ export default {
             this.walletAddr = sessionStorage.walletAddr
 
             //呼叫 /client_mine取得proof及previous hash
+            fetch('http://localhost:5000/client_mine')
+                .then((res) => res.json())
+                .then((data) => {
+                    this.last_hash = data.last_hash
+                    this.last_proof = data.last_proof
+                })
         }
     }
 }
@@ -68,6 +167,9 @@ export default {
     margin-top: 10px
     box-shadow: $shadow
     .down
+        .start.stop
+            background-color: $orange
+            font-weight: 800
         .start
             text-align: center
             padding: 6px 5px
@@ -81,6 +183,16 @@ export default {
         padding: 0px 20px
         margin-top: 30px
     .body
+        .hash_total.time, .hash_total.hash
+            margin-top: 20px
+        .hash_total.hash
+            .title
+                background-color: $black
+                color: $orange
+            .amount
+                color: $orange
+                word-wrap: break-word
+                text-align: left
         .hash_total
             text-align: center
             margin-top: 10px
@@ -93,7 +205,7 @@ export default {
                 background-color: $dark_black
                 letter-spacing: 2px
                 border-radius: 15px 15px 0px 0px
-            .amout
+            .amount
                 background-color: rgba($gray, 0.4)
                 padding: 15px 10px
                 border-radius: 0px 0px 15px 15px
@@ -107,4 +219,12 @@ export default {
             cursor: pointer
         *
             margin-right: 7px
+
+.find-enter-active, .find-leave-active
+    transition: 0.6s
+    transform: scale(1)
+
+.find-enter, .find-leave-to
+    transform: scale(1.2)
+    background-color: red
 </style>
