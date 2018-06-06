@@ -11,6 +11,13 @@ module.exports = {
   module: {
     rules: [
       {
+          test: /\.worker\.js$/,
+          use: { loader: 'worker-loader',
+          options: {
+              // publicPath: '/'
+          }}
+      },
+      {
         test: /\.css$/,
         use: [
           'vue-style-loader',

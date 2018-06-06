@@ -1,5 +1,6 @@
 import Mine from '../components/mine.vue'
 import Login from '../components/login.vue'
+import Verify from '../components/verifyBlock.vue'
 
 
 export const routes = [
@@ -20,6 +21,9 @@ export const routes = [
         'path': '/register',
         component: Login
 
+    },{
+        'path': '/verify',
+        component: Verify
     },{
         'path': "*",
         redirect: {

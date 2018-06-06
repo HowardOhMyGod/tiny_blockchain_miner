@@ -17,7 +17,7 @@
                 transition(name="find")
                     .hash_total.hash(v-if="findHash && findObj")
                         .title Mined Hash
-                        .amount {{findObj.hash}}
+                        .amount {{findObj.minedHash}}
             .down
                 #start_btn.start(@click="mine", :class="{stop: isMine}") {{start_btn}}
 
@@ -25,12 +25,10 @@
 
 <script>
 import * as crypto from "crypto"
+import mineWorker from '../workers/mine.worker.js'
 
 let timeCount;
-
-function is_proof(hashStr){
-    return hashStr.slice(0, 4) == "0000"
-}
+let miner;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -56,23 +54,6 @@ function stop(vue) {
     thisVue.isMine = false
 }
 
-function mine(proof, last_proof, last_hash) {
-    let hashStr = ''
-    let hash = crypto.createHash('sha256');
-
-    hash.update(`${last_proof}${proof}${last_hash}`)
-    hashStr = hash.digest('hex')
-
-    if(is_proof(hashStr)) {
-        return {
-            "hash": hashStr,
-            "proof": proof
-        }
-    } else {
-        return null
-    }
-}
-
 export default {
     sockets: {
         connect: function(){
@@ -95,6 +76,7 @@ export default {
             hashes: 0,
             last_hash: 'fifwjiofheiwofn',
             last_proof: 100,
+            proof: 0,
             start_btn: "Start",
             isMine: false,
             pressStop: false,
@@ -107,34 +89,52 @@ export default {
         clickBtn: function(){
             this.$socket.emit('message', "Hello Server!")
         },
-        mine: async function(){
-            let proof = 0
+        mine: function(){
+            let vue = this
 
+            // if not login
+            if(!sessionStorage.walletAddr) {
+                alert('Please Login First!')
+                return
+            }
+
+            // start minding
             if (!this.isMine) {
                 start(this)
+                console.log('start: ', this.hashes)
+                // create miner thread to mine, send last_block info
+                miner = new mineWorker()
+                miner.postMessage({
+                    last_hash: this.last_hash,
+                    last_proof: this.last_proof,
+                    proof: this.hashes
+                })
 
-                while(!this.pressStop){
-                    this.findObj = mine(proof, this.last_proof, this.last_hash)
+                // listen for miner message
+                miner.onmessage = (evt) => {
+                    // console.log(evt.data)
+                    if (!evt.data.minedHash) {
+                        vue.hashes = evt.data.computedHashs
+                    } else {
+                        vue.findObj = evt.data
 
-                    if (this.findObj) {
-                        break
+                        // finded mined hash
+                        stop(this)
+                        this.findHash = true
+                        miner.terminate()
                     }
-
-                    proof++
-                    this.hashes++
-                    // await sleep(0.00000000000001)
                 }
-
-                stop(this)
-                this.findHash = true
-
+            // press stop mining
             } else {
                 stop(this)
+                miner.terminate()
+                console.log('stop: ', this.hashes)
             }
 
         }
     },
     mounted(){
+        // check if use login
         if(sessionStorage.walletAddr){
             this.hasLogin = true
             this.walletAddr = sessionStorage.walletAddr
@@ -145,6 +145,8 @@ export default {
                 .then((data) => {
                     this.last_hash = data.last_hash
                     this.last_proof = data.last_proof
+                }).catch((e) => {
+                    alert("Can't get last block hash and proof")
                 })
         }
     }
