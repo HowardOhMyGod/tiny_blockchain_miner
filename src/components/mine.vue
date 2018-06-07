@@ -221,7 +221,7 @@ export default {
                 letter-spacing: 2px
                 border-radius: 15px 15px 0px 0px
             .amount
-                background-color: rgba($gray, 0.4)
+                background-color: $gray
                 padding: 15px 10px
                 border-radius: 0px 0px 15px 15px
     .top

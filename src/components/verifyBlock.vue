@@ -14,7 +14,7 @@
         .msg Receive !
     .title {{verify_title}}
     .options(v-if="verify_result")
-        a.wallet Wallet
+        a.wallet(href="/wallet") Wallet
         a.home(href="/mine") Home
 
 
