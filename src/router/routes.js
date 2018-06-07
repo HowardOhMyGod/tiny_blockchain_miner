@@ -2,6 +2,7 @@ import Mine from '../components/mine.vue'
 import Login from '../components/login.vue'
 import Verify from '../components/verifyBlock.vue'
 import Wallet from '../components/wallet.vue'
+import Transfer from '../components/transfer.vue'
 
 
 export const routes = [
@@ -26,6 +27,9 @@ export const routes = [
     },{
         'path': '/verify',
         component: Verify
+    },{
+        'path': '/transfer',
+        component: Transfer
     },{
         'path': "*",
         redirect: {

@@ -28,6 +28,7 @@ body, html
     margin: 0px
     padding: 0px
     width: 100%
+    height: 100%
     display: flex
     flex-direction: column
     justify-content: center

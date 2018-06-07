@@ -55,10 +55,5 @@ export default {
     .title
         margin-bottom: 20px
     input
-        width: calc(100% - 20px)
-        height: 30px
-        padding: 3px 5px
-        font-size: 16px
-        &:focus
-            outline: none
+        +input
 </style>

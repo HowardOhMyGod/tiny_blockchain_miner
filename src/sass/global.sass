@@ -1,1 +1,14 @@
 @import "./color.sass"
+
+@mixin input
+    width: calc(100% - 40px)
+    height: 25px
+    padding: 3px 8px
+    font-size: 16px
+    background-color: $gray
+    color: white
+    border: none
+    box-shadow: $shadow
+    border-radius: 6px
+    &:focus
+        outline: none

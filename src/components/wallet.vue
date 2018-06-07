@@ -14,7 +14,7 @@
             .s_r
                 .sender From: weghfoiweghow
                 .receiver To: gwrghowig
-    a.transfer Transfer
+    a.transfer(href="/transfer") Transfer
     a.home(href="/mine") Home
 </template>
 
