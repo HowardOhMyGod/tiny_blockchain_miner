@@ -1,17 +1,69 @@
 <template lang="pug">
 .verify_page
-    .load
+    .load(v-if="verify_result == null")
         .ball1
             .ball
         .ball2
             .ball
         .ball3
             .ball
-    .title Verifing...
+    .award(v-if="verify_result")
+        .amount
+            h4 {{award}}
+            span coins
+        .msg Receive !
+    .title {{verify_title}}
+    .options(v-if="verify_result")
+        a.wallet Wallet
+        a.home(href="/mine") Home
+
+
 </template>
 
 <script>
 export default {
+    data () {
+        return {
+            verify_result: null,
+            award: 0
+        }
+    },
+    computed: {
+        verify_title () {
+            if (this.verify_result === null) {
+                return "Verifing..."
+            }
+            if (this.verify_result.verify) {
+                this.award = this.verify_result.award
+                return "Verify Successfully !"
+            } else if (!this.verify_result.verify) {
+                return "Invalid Hash !"
+            }
+        }
+    },
+    mounted() {
+        setTimeout(() => {
+            fetch('http://localhost:5000//block_verify', {
+                method: 'post',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    miner: this.$route.query.miner,
+                    hash: this.$route.query.hash,
+                    proof: this.$route.query.proof
+                })
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                this.verify_result = data
+            })
+            .catch((e) => {
+                alert("Sorry, Can't verify right now.")
+            })
+        }, 3000)
+    }
 }
 </script>
 
@@ -36,11 +88,43 @@ export default {
     // border: solid white 1px
 .verify_page
     padding: 30px 20px
-    height: 120px
 .title
     text-align: center
     font-size: 20px
-    margin-top: 55px
+    margin-top: 30px
+.options
+    display: flex
+    flex-direction: column
+    align-items: center
+    a
+        color: white
+        text-decoration: none
+    *
+        width: 80%
+        text-align: center
+        padding: 5px 5px
+        margin-top: 20px
+        border: solid white 1px
+        border-radius: 20px
+.award
+    margin-top: 10px
+    padding: 20px 10px
+    border-radius: 15px
+    box-shadow: $shadow
+    *
+        text-align: center
+    .msg
+        margin-top: 20px
+        font-size: 20px
+    .amount
+        h4, span
+            display: inline-block
+            margin: 0px
+        h4
+            font-size: 60px
+            font-weight: 700
+            margin-right: 5px
+            color: $orange
 .load
     display: flex
     justify-content: center

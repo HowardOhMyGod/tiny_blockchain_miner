@@ -47,6 +47,7 @@ function start(vue){
 function stop(vue) {
     let thisVue = vue
 
+    miner.terminate()
     clearInterval(timeCount)
 
     thisVue.pressStop = true
@@ -62,6 +63,8 @@ export default {
         lose_mine: function(res){
             if (res.lose) {
                 stop(this)
+                this.hashes = 0
+                this.mineSeconds = 0
                 alert("You're too slow!")
             }
         }
@@ -121,14 +124,23 @@ export default {
                         // finded mined hash
                         stop(this)
                         this.findHash = true
-                        miner.terminate()
+
+                        // send to verify
+                        this.start_btn = "Preparing to verify..."
+                        setTimeout(() => this.$router.push({
+                            'path': '/verify',
+                            'query': {
+                                hash: this.findObj.minedHash,
+                                miner: this.walletAddr,
+                                proof: this.findObj.proof
+                            }
+                        }), 5000)
+
                     }
                 }
             // press stop mining
             } else {
                 stop(this)
-                miner.terminate()
-                console.log('stop: ', this.hashes)
             }
 
         }
@@ -145,6 +157,7 @@ export default {
                 .then((data) => {
                     this.last_hash = data.last_hash
                     this.last_proof = data.last_proof
+                    console.log(data)
                 }).catch((e) => {
                     alert("Can't get last block hash and proof")
                 })
