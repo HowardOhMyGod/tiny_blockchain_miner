@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import {block_verify} from '../request'
+
 export default {
     data () {
         return {
@@ -43,25 +45,9 @@ export default {
     },
     mounted() {
         setTimeout(() => {
-            fetch('http://localhost:5000//block_verify', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    miner: this.$route.query.miner,
-                    hash: this.$route.query.hash,
-                    proof: this.$route.query.proof
-                })
-            })
-            .then((res) => res.json())
-            .then((data) => {
-                this.verify_result = data
-            })
-            .catch((e) => {
-                alert("Sorry, Can't verify right now.")
-            })
+            block_verify(this)
+                .then((data) => this.verify_result = data)
+                .catch((e) => alert('Request block_verify failed: ', e))
         }, 3000)
     }
 }

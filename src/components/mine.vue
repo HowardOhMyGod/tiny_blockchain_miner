@@ -26,6 +26,7 @@
 <script>
 import * as crypto from "crypto"
 import mineWorker from '../workers/mine.worker.js'
+import {client_mine} from '../request.js'
 
 let timeCount;
 let miner;
@@ -152,15 +153,13 @@ export default {
             this.walletAddr = sessionStorage.walletAddr
 
             //呼叫 /client_mine取得proof及previous hash
-            fetch('http://localhost:5000/client_mine')
-                .then((res) => res.json())
+            client_mine()
                 .then((data) => {
                     this.last_hash = data.last_hash
                     this.last_proof = data.last_proof
-                    console.log(data)
-                }).catch((e) => {
-                    alert("Can't get last block hash and proof")
+                    console.log('client_mine: true')
                 })
+                .catch((e) => alert("Can't get last block hash and proof: ", e))
         }
     }
 }
