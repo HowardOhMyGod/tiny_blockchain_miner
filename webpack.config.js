@@ -1,10 +1,12 @@
 var path = require('path')
 var webpack = require('webpack')
 
-let worker_path = '/dist/';
+let worker_path = '/dist/'
+let domain = 'http://localhost:5000'
 
 if (process.env.NODE_ENV === 'production') {
   worker_path = '/'
+  domain = 'http://blockchain_api:5000'
 
   module.exports.devtool = '#source-map'
   module.exports.plugins = (module.exports.plugins || []).concat([
@@ -32,6 +34,14 @@ module.exports = {
     publicPath: '/dist/',
     filename: 'build.js'
   },
+  plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
+          DOMAIN: JSON.stringify(domain)
+        }
+  })
+  ],
   module: {
     rules: [
       {

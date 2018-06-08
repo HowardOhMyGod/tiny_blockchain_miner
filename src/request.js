@@ -1,10 +1,8 @@
 let domain;
 
-if (process.env.NODE_ENV === 'production') {
-    domain = 'http://blockchain_api:5000'
-} else {
-    domain = 'http://localhost:5000'
-}
+domain = process.env.DOMAIN
+
+console.log('domain: ', domain)
 
 function client_mine() {
     return new Promise((resolve, reject) => {
