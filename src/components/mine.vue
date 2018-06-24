@@ -20,6 +20,7 @@
                         .amount {{findObj.minedHash}}
             .down
                 #start_btn.start(@click="mine", :class="{stop: isMine}") {{start_btn}}
+                .start.wallet(v-if="hasLogin", @click="$router.push({'path': '/wallet'})") Wallet
 
 </template>
 
@@ -193,6 +194,10 @@ export default {
             letter-spacing: 3px
             font-size: 18px
             cursor: pointer
+        .start.wallet
+            margin-top: 15px
+            background-color: transparent
+            border: solid 1px white
     .body, .down
         padding: 0px 20px
         margin-top: 30px
