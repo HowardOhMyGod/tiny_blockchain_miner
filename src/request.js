@@ -2,8 +2,6 @@ let domain;
 
 domain = process.env.DOMAIN
 
-console.log('domain: ', domain)
-
 function client_mine() {
     return new Promise((resolve, reject) => {
         fetch(`${domain}/client_mine`)
@@ -29,9 +27,7 @@ function block_verify(vue) {
         })
         .then((res) => res.json())
         .then((data) => resolve(data))
-        .catch((e) => {
-            reject(e)
-        })
+        .catch((e) => reject(e))
     })
 }
 

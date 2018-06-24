@@ -135,7 +135,7 @@ export default {
                                 miner: this.walletAddr,
                                 proof: this.findObj.proof
                             }
-                        }), 5000)
+                        }), 2000)
 
                     }
                 }

@@ -6,7 +6,7 @@ let domain = 'http://localhost:5000'
 
 if (process.env.NODE_ENV === 'production') {
   worker_path = '/'
-  domain = 'http://blockchain_api:5000'
+  domain = 'http://40.74.64.124:5000'
 
   module.exports.devtool = '#source-map'
   module.exports.plugins = (module.exports.plugins || []).concat([
