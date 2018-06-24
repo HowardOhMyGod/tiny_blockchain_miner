@@ -3,23 +3,40 @@
     .wallet_info
         .addr
             h4 Wallet Address
-            p howardisgood
+            p {{address}}
         .money
             h4 Current Saving
-            p 5
+            p {{saving}}
     .transactions
         .title Transactions
-        .transaction(v-for="i in 5")
-            .amount 15
+        .transaction(v-for="tran in transactions")
+            .amount {{tran.amount}}
             .s_r
-                .sender From: weghfoiweghow
-                .receiver To: gwrghowig
+                .sender From: {{tran.sender}}
+                .receiver To: {{tran.recipient}}
     a.transfer(href="/transfer") Transfer
     a.home(href="/mine") Home
 </template>
 
 <script>
+import {get_wallet} from '../request'
 export default {
+    data() {
+        return {
+            transactions: [],
+            saving: 0,
+            address: ''
+        }
+    },
+    mounted(){
+        this.address = sessionStorage.walletAddr
+
+        get_wallet(this.address)
+            .then((data) => {
+                this.transactions = data.result
+                this.saving = data.saving
+            })
+    }
 }
 </script>
 

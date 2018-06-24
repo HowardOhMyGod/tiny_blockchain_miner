@@ -1,6 +1,8 @@
-let domain;
-
-domain = process.env.DOMAIN
+const domain = process.env.DOMAIN
+const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+}
 
 function client_mine() {
     return new Promise((resolve, reject) => {
@@ -15,10 +17,7 @@ function block_verify(vue) {
     return new Promise((resolve, reject) => {
         fetch(`${domain}/block_verify`, {
             method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
+            headers,
             body: JSON.stringify({
                 miner: vue.$route.query.miner,
                 hash: vue.$route.query.hash,
@@ -31,4 +30,19 @@ function block_verify(vue) {
     })
 }
 
-export {client_mine, block_verify}
+function get_wallet(address) {
+    return new Promise((resolve, reject) => {
+        fetch(`${domain}/wallet/transactions`, {
+            method: 'post',
+            headers,
+            body: JSON.stringify({
+                address
+            })
+        })
+        .then((res) => res.json())
+        .then((data) => resolve(data))
+        .catch((e) => reject(e))
+    })
+}
+
+export {client_mine, block_verify, get_wallet}
