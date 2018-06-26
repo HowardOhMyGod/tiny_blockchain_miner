@@ -19,8 +19,19 @@ function login(pid) {
     })
 }
 
-function register(address) {
-
+function register(pid) {
+    return new Promise((resolve, reject) => {
+        fetch(`${domain}/new_wallet`, {
+            method: 'post',
+            headers,
+            body: JSON.stringify({
+                data: pid
+            })
+        })
+        .then((res) => res.json())
+        .then((data) => resolve(data))
+        .catch((e) => reject(e))
+    })
 }
 
 function client_mine() {
@@ -85,6 +96,7 @@ export {
     client_mine,
     block_verify,
     get_wallet,
+    register,
     login,
     transfer
 }

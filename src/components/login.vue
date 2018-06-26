@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import {login} from '../request.js'
+import {login, register} from '../request.js'
 export default {
     data(){
         return {
@@ -28,7 +28,12 @@ export default {
                     })
 
             } else if (this.$route.path === '/register') {
-
+                register(this.value)
+                    .then((data) => {
+                        if (data) {
+                            alert('Account Register!')
+                        }
+                    })
             }
 
             this.$router.push('mine')
