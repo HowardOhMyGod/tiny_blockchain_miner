@@ -4,6 +4,25 @@ const headers = {
     'Content-Type': 'application/json'
 }
 
+function login(pid) {
+    return new Promise((resolve, reject) => {
+        fetch(`${domain}/login`, {
+            method: 'post',
+            headers,
+            body: JSON.stringify({
+                pid
+            })
+        })
+        .then((res) => res.json())
+        .then((data) => resolve(data))
+        .catch((e) => reject(e))
+    })
+}
+
+function register(address) {
+
+}
+
 function client_mine() {
     return new Promise((resolve, reject) => {
         fetch(`${domain}/client_mine`)
@@ -45,4 +64,27 @@ function get_wallet(address) {
     })
 }
 
-export {client_mine, block_verify, get_wallet}
+function transfer(wallet_address, amount, recipient) {
+    return new Promise((resolve, reject) => {
+        fetch(`${domain}/transfer`, {
+            method: 'post',
+            headers,
+            body: JSON.stringify({
+                wallet_address,
+                amount,
+                recipient
+            })
+        })
+        .then((res) => res.json())
+        .then((data) => resolve(data))
+        .catch((e) => reject(e))
+    })
+}
+
+export {
+    client_mine,
+    block_verify,
+    get_wallet,
+    login,
+    transfer
+}

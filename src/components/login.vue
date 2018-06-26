@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import {login} from '../request.js'
 export default {
     data(){
         return {
@@ -18,7 +19,16 @@ export default {
     methods: {
         btn_action(){
             if(this.$route.path === '/login'){
-                sessionStorage.walletAddr = this.value
+                login(this.value).then((res) => {
+                        if (res.login) {
+                            sessionStorage.walletAddr = res.wallet_address
+                        } else {
+                            alert('Invalid Address');
+                        }
+                    })
+
+            } else if (this.$route.path === '/register') {
+
             }
 
             this.$router.push('mine')

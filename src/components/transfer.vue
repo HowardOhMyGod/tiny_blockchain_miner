@@ -1,33 +1,41 @@
 <template lang="pug">
 .transfer_wraper
     .title Receiver Wallet Address :
-    input(placeholder="Reciever Address", v-model="receiverAddr")
+    input(placeholder="Reciever PID", v-model="receiverPid")
     .title Sending Amount :
-    input(placeholder="Send Amount", v-model="sendAmount")
-    .send_btn(@click="send") {{send_btn}}
+    input(placeholder="Send Amount", v-model.number="amount")
+    .send_btn(@click="transfer") {{send_btn}}
 
 </template>
 
 <script>
+import {transfer} from '../request'
 export default {
     data () {
         return {
-            receiverAddr: '',
-            sendAmount: '',
+            receiverPid: '',
+            amount: '',
             send_btn: "Transfer"
         }
     },
     methods: {
-        send () {
-            if (!this.receiverAddr || !this.sendAmount) {
+        transfer () {
+            if (!this.receiverPid || !this.amount || this.amount <= 0) {
                 alert('Invalid Input!')
                 return
             }
 
             this.send_btn = "Transfering..."
+            transfer(sessionStorage.walletAddr, this.amount, this.receiverPid)
+                .then((data) => {
+                    if (data.error) {
+                        alert(data.errMsg)
+                    } else {
+                        alert('Tranfer Success!')
+                    }
 
-            setTimeout(() => this.$router.push({'path': '/wallet'}), 2000)
-
+                    setTimeout(() => this.$router.push({'path': '/wallet'}), 2000)
+                })
         }
     }
 }

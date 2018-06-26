@@ -9,6 +9,13 @@
 <script>
 export default {
   name: 'app',
+  sockets: {
+      new_transaction: function(res) {
+          if (res) {
+              alert('New transaction generate! Hurry up miner!')
+          }
+      }
+  },
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'

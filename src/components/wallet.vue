@@ -3,7 +3,7 @@
     .wallet_info
         .addr
             h4 Wallet Address
-            p {{address}}
+            p {{address.slice(0, 20)}}...
         .money
             h4 Current Saving
             p {{saving}}
@@ -12,8 +12,8 @@
         .transaction(v-for="tran in transactions")
             .amount {{tran.amount}}
             .s_r
-                .sender From: {{tran.sender}}
-                .receiver To: {{tran.recipient}}
+                .sender From: {{isMe(tran.sender)}}
+                .receiver To: {{isMe(tran.recipient)}}
     a.transfer(href="/transfer") Transfer
     a.home(href="/mine") Home
 </template>
@@ -26,6 +26,15 @@ export default {
             transactions: [],
             saving: 0,
             address: ''
+        }
+    },
+    methods: {
+        isMe (address) {
+            if (address === this.address) {
+                return 'Me'
+            } else {
+                return address.slice(0, 20) + '...'
+            }
         }
     },
     mounted(){

@@ -2,7 +2,7 @@
     .mine
         .title Mining Online
         .miner_wrap
-            .top.hasLogin(v-if="hasLogin") {{walletAddr}}
+            .top.hasLogin(v-if="hasLogin") {{walletAddr.slice(0,20)}}...
             .top(v-if="!hasLogin")
                 a#login(href="login") LOGIN
                 span OR
@@ -70,7 +70,6 @@ export default {
                 alert("You're too slow!")
             }
         }
-
     },
     data() {
         return {
@@ -178,6 +177,8 @@ export default {
     font-size: 20px
 .top.hasLogin
     color: $blue
+    padding: 3px 5px
+    word-wrap: break-word
 .miner_wrap
     margin-top: 10px
     box-shadow: $shadow
