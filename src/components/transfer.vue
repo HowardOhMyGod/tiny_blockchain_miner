@@ -34,7 +34,7 @@ export default {
                         alert('Tranfer Success!')
                     }
 
-                    setTimeout(() => this.$router.push({'path': '/wallet'}), 2000)
+                    this.$router.push({'path': '/wallet'})
                 })
         }
     }

@@ -1,19 +1,19 @@
 <template lang="pug">
 .verify_page
-    .load(v-if="verify_result == null")
+    .load(v-if="response == null")
         .ball1
             .ball
         .ball2
             .ball
         .ball3
             .ball
-    .award(v-if="verify_result")
+    .award(v-if="response")
         .amount
             h4 {{award}}
             span coins
         .msg Receive !
-    .title {{verify_title}}
-    .options(v-if="verify_result")
+    .title {{verify_title}} !
+    .options(v-if="response")
         a.wallet(href="/wallet") Wallet
         a.home(href="/mine") Home
 
@@ -26,27 +26,30 @@ import {block_verify} from '../request'
 export default {
     data () {
         return {
-            verify_result: null,
+            response: null,
+            errMsg: null,
             award: 0
         }
     },
     computed: {
         verify_title () {
-            if (this.verify_result === null) {
+            if (this.response === null) {
                 return "Verifing..."
             }
-            if (this.verify_result.verify) {
-                this.award = this.verify_result.award
+            if (this.response.verify) {
+                this.award = this.response.award
                 return "Verify Successfully !"
-            } else if (!this.verify_result.verify) {
-                return "Invalid Hash !"
+            } else if (!this.response.verify) {
+                return this.response.errMsg
             }
         }
     },
     mounted() {
         setTimeout(() => {
             block_verify(this)
-                .then((data) => this.verify_result = data)
+                .then((data) => {
+                    this.response = data
+                })
                 .catch((e) => alert('Request block_verify failed: ', e))
         }, 3000)
     }
