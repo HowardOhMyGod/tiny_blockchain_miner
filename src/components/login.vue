@@ -25,6 +25,8 @@ export default {
                         } else {
                             alert('Invalid Address');
                         }
+
+                        this.$router.push('mine')
                     })
 
             } else if (this.$route.path === '/register') {
@@ -33,10 +35,10 @@ export default {
                         if (data) {
                             alert('Account Register!')
                         }
+
+                        this.$router.push('mine')
                     })
             }
-
-            this.$router.push('mine')
         }
     },
     mounted(){
